@@ -20,5 +20,7 @@ type Block struct {
 }
 
 type Blockchain struct {
+	Difficulty   int
+	ProofChar    rune
 	Chain        []Block
 }
