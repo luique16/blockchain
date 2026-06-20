@@ -2,6 +2,7 @@ package blockchain
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -62,25 +63,25 @@ func (b *Blockchain) MineBlock(block Block) {
 	for {
 		hash := block.Payload.Hash(nonce)
 
-		if string(hash[:b.Difficulty]) == strings.Repeat(string(b.ProofChar), b.Difficulty) {
+		hexHash := fmt.Sprintf("%x", hash)
+
+		if hexHash[:b.Difficulty] == strings.Repeat(string(b.ProofChar), b.Difficulty) {
 			block.Header.Nonce = nonce
 			block.Header.Hash = string(hash[:])
 
 			b.Chain = append(b.Chain, block)
 
-			break
+			return
 		}
 
 		nonce++
 	}
-
-	b.Chain = append(b.Chain, block)
 }
 
 func (b *Blockchain) ValidateChain(log bool) bool {
 	for i := 1; i < len(b.Chain); i++ {
-		if b.Chain[i].Payload.PreviousHash != b.Chain[i-1].Header.Hash &&
-		   b.Chain[i].Header.Hash == b.Chain[i].Payload.Hash(b.Chain[i].Header.Nonce) {
+		if b.Chain[i].Payload.PreviousHash != b.Chain[i-1].Header.Hash ||
+		   b.Chain[i].Header.Hash != b.Chain[i].Payload.Hash(b.Chain[i].Header.Nonce) {
 			if log {
 				println("Block " + strconv.Itoa(i) + " invalid")
 			}
