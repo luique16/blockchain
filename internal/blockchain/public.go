@@ -1,6 +1,7 @@
 package blockchain
 
 import (
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -58,12 +59,12 @@ func (b *Blockchain) LastBlockHash() string {
 }
 
 func (b *Blockchain) MineBlock(block Block) {
-	nonce := 0
+	var nonce int64 = 0
+	payloadStr := block.Payload.String()
 
 	for {
-		hash := block.Payload.Hash(nonce)
-
-		hexHash := fmt.Sprintf("%x", hash)
+		hash := sha256.Sum256([]byte(strconv.FormatInt(nonce, 10) + payloadStr))
+		hexHash := fmt.Sprintf("%x", hash[:])
 
 		if hexHash[:b.Difficulty] == strings.Repeat(string(b.ProofChar), b.Difficulty) {
 			block.Header.Nonce = nonce

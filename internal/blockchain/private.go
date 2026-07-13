@@ -5,8 +5,8 @@ import (
 	"strconv"
 )
 
-func (p Payload) Hash(nonce int) string {
-	hash := sha256.Sum256([]byte(strconv.Itoa(nonce) + p.String()))
+func (p Payload) Hash(nonce int64) string {
+	hash := sha256.Sum256([]byte(strconv.FormatInt(nonce, 10) + p.String()))
 
 	return string(hash[:])
 }

@@ -2,7 +2,7 @@ package blockchain
 
 type Header struct {
 	Index 	     int
-	Nonce 	     int
+	Nonce 	     int64
 	Hash 	     string
 }
 
